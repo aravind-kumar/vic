@@ -15,7 +15,7 @@
 *** Settings ***
 Documentation  Test 6-15 - Verify remote syslog
 Resource  ../../resources/Util.robot
-Suite Setup  Install VIC Appliance To Test Server  additional-args=--syslog-address tcp://%{SYSLOG_SERVER}:514 --debug 1
+Suite Setup  Install VIC Appliance To Test Server  additional-args=--syslog-address tcp://%{DRONE_MACHINE}:514 --debug 1
 Suite Teardown  Cleanup VIC Appliance On Test Server
 Test Timeout  20 minutes
 
