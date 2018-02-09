@@ -64,7 +64,7 @@ Verify VCH remote syslog
 
     Wait Until Container Stops  ${id}  5
 
-    ${syslog-conn}=  Open Connection  %{SYSLOG_SERVER}  port=2222
+    ${syslog-conn}=  Open Connection  %{SYSLOG_SERVER}
     Login  %{SYSLOG_USER}  %{SYSLOG_PASSWD}
     ${out}=  Wait Until Keyword Succeeds  10x  3s  Execute Command  cat ${SYSLOG_FILE}
     Close Connection
