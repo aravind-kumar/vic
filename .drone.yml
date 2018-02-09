@@ -106,7 +106,7 @@ pipeline:
       GS_CLIENT_EMAIL: ${GS_CLIENT_EMAIL}
       GS_PRIVATE_KEY: ${GS_PRIVATE_KEY}
       DOMAIN: ${CI_DOMAIN}
-      SYSLOG_SERVER: syslog
+      SYSLOG_SERVER: 127.0.0.1
       SYSLOG_USER: root
       SYSLOG_PASSWD: vmware1
     commands:
@@ -354,6 +354,7 @@ services:
   syslog:
     image: harbor.ci.drone.local/library/syslog-server:1.0
     ports:
+      - "2222:22"
       - "514:514"
       - "601:601"
     privileged: true
