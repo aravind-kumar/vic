@@ -1,0 +1,25 @@
+# Building:
+# docker build --no-cache -t syslog-server -f Dockerfile.syslog .
+# docker tag syslog-server gcr.io/eminent-nation-87317/syslog-server:1.x
+# gcloud auth login
+# gcloud docker -- push gcr.io/eminent-nation-87317/syslog-server:1.x
+# open vpn to CI cluster then run:
+# docker tag syslog-server 192.168.31.15/library/syslog-server:1.x
+# docker push 192.168.31.15/library/syslog-server:1.x
+FROM balabit/syslog-ng
+
+RUN apt-get install -y openssh-server
+
+WORKDIR /etc/ssh
+RUN sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/g' sshd_config
+
+RUN echo "root:vmware1" | chpasswd
+
+EXPOSE 22/tcp
+
+RUN echo '#!/bin/bash' >> /usr/bin/start-script
+RUN echo 'service ssh start' >> /usr/bin/start-script
+RUN echo '/usr/sbin/syslog-ng -F' >> /usr/bin/start-script
+RUN chmod +x /usr/bin/start-script
+
+ENTRYPOINT ["/usr/bin/start-script"]
