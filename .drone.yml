@@ -356,5 +356,5 @@ services:
     privileged: true
     pull: true
     ports:
-      - 514:514
+      - "514:514"
 
