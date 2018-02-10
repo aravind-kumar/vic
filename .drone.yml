@@ -354,6 +354,7 @@ services:
   syslog:
     image: harbor.ci.drone.local/library/syslog-server:1.0
     privileged: true
+    pull: true
     ports:
       - 514:514
 
