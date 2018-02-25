@@ -1,4 +1,4 @@
-// Copyright 2016 VMware, Inc. All Rights Reserved.
+// Copyright 2018 VMware, Inc. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,17 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package guest
+package pod
 
 import (
-	"github.com/vmware/govmomi/vim25/types"
-	"github.com/vmware/vic/lib/spec"
+	"fmt"
+
+	"k8s.io/api/core/v1"
 )
 
-// Guest interface defines the different guest types
-type Guest interface {
-	GuestID() string
-	Spec() *spec.VirtualMachineConfigSpec
-	Controller() *types.BaseVirtualController
-	NewDisk() *types.VirtualDisk
+
+func VicNameFromPod(pod *v1.Pod) string {
+	return VicName(pod.Namespace, pod.Name)
+}
+
+func VicName(namespace, name string) string {
+	return fmt.Sprintf("pod-%s-%s", namespace, name)
 }
