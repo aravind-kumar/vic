@@ -305,6 +305,7 @@ pipeline:
     files:
       - .cover/cover.out
 
+
   notify-slack-on-fail:
     image: plugins/slack
     secrets:
