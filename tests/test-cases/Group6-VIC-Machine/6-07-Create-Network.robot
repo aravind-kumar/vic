@@ -1,4 +1,4 @@
-# Copyright 2016-2017 VMware, Inc. All Rights Reserved.
+# Copyright 2016-2018 VMware, Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -54,8 +54,8 @@ Cleanup Connectivity Bridge to Management Test
 
 *** Test Cases ***
 Public network - default
-    Pass Execution If  '%{HOST_TYPE}' == 'VC'  VC needs you to specify a working portgroup for public network, can't rely on default logic
     Set Test Environment Variables
+    Pass Execution If  '%{HOST_TYPE}' == 'VC'  VC needs you to specify a working portgroup for public network, can't rely on default logic
     # Attempt to cleanup old/canceled tests
     Run Keyword And Ignore Error  Cleanup Dangling VMs On Test Server
     Run Keyword And Ignore Error  Cleanup Datastore On Test Server
@@ -138,8 +138,8 @@ Management network - unreachable
     Pass execution  Test not implemented
 
 Management network - valid
-    Pass Execution If  '%{HOST_TYPE}' == 'VC'  VC needs you to specify a working portgroup for public network, can't rely on default logic
     Set Test Environment Variables
+    Pass Execution If  '%{HOST_TYPE}' == 'VC'  VC needs you to specify a working portgroup for public network, can't rely on default logic
     # Attempt to cleanup old/canceled tests
     Run Keyword And Ignore Error  Cleanup Dangling VMs On Test Server
     Run Keyword And Ignore Error  Cleanup Datastore On Test Server
@@ -265,9 +265,9 @@ Connectivity Bridge to Management
     [Teardown]  Cleanup Connectivity Bridge to Management Test
 
 Bridge network - vCenter none
+    Set Test Environment Variables
     Run Keyword If  '%{HOST_TYPE}' == 'ESXi'  Pass Execution  Test skipped on ESXi
 
-    Set Test Environment Variables
     # Attempt to cleanup old/canceled tests
     Run Keyword And Ignore Error  Cleanup Dangling VMs On Test Server
     Run Keyword And Ignore Error  Cleanup Datastore On Test Server
@@ -280,9 +280,9 @@ Bridge network - vCenter none
     Cleanup VCH Bridge Network  %{VCH-NAME}
 
 Bridge network - ESX none
+    Set Test Environment Variables
     Run Keyword If  '%{HOST_TYPE}' == 'VC'  Pass Execution  Test skipped on VC
 
-    Set Test Environment Variables
     # Attempt to cleanup old/canceled tests
     Run Keyword And Ignore Error  Cleanup Dangling VMs On Test Server
     Run Keyword And Ignore Error  Cleanup Datastore On Test Server
@@ -296,10 +296,10 @@ Bridge network - ESX none
     Cleanup VIC Appliance On Test Server
 
 Bridge network - create bridge network if it doesn't exist
+    Set Test Environment Variables
     Run Keyword If  '%{HOST_TYPE}' == 'VC'  Pass Execution  Test not applicable on vCenter
     # ESX should automatically create the bridge switch & port group AAAAAAAAAA, but vCenter would fail with unknown network error
 
-    Set Test Environment Variables
     # Attempt to cleanup old/canceled tests
     Run Keyword And Ignore Error  Cleanup Dangling VMs On Test Server
     Run Keyword And Ignore Error  Cleanup Datastore On Test Server
@@ -320,18 +320,20 @@ Bridge network - create bridge network if it doesn't exist
     Run  govc host.vswitch.remove 'AAAAAAAAAA'
 
 Bridge network - invalid vCenter
+    Set Test Environment Variables
     Run Keyword If  '%{HOST_TYPE}' == 'ESXi'  Pass Execution  Test skipped on ESXi
 
     Pass execution  Test not implemented
 
 Bridge network - non-DPG
+    Set Test Environment Variables
     Run Keyword If  '%{HOST_TYPE}' == 'ESXi'  Pass Execution  Test skipped on ESXi
 
     Pass execution  Test not implemented
 
 Bridge network - valid
-    Pass Execution If  '%{HOST_TYPE}' == 'VC'  VC needs you to specify a working portgroup for public network, can't rely on default logic
     Set Test Environment Variables
+    Pass Execution If  '%{HOST_TYPE}' == 'VC'  VC needs you to specify a working portgroup for public network, can't rely on default logic
     # Attempt to cleanup old/canceled tests
     Run Keyword And Ignore Error  Cleanup Dangling VMs On Test Server
     Run Keyword And Ignore Error  Cleanup Datastore On Test Server
@@ -417,14 +419,13 @@ Container network - space in network name valid
     Run Keyword And Ignore Error  Cleanup Datastore On Test Server
 
     Log To Console  Create a portgroup with a space in its name
-    ${out}=  Run Keyword If  '%{HOST_TYPE}' == 'ESXi'  Run  govc host.portgroup.add -vswitch vSwitchLAN 'VM Network With Spaces'
-    ${out}=  Run Keyword If  '%{HOST_TYPE}' == 'VC'  Add VC Distributed Portgroup  test-ds  'VM Network With Spaces'
-
-    Log To Console  Create a bridge portgroup.
-    ${out}=  Run Keyword If  '%{HOST_TYPE}' == 'ESXi'  Run  govc host.portgroup.add -vswitch -vlan=196 vSwitchLAN bridge
+    ${out}=  Run Keyword If  '%{HOST_TYPE}' == 'ESXi'  Run  govc host.portgroup.add -vswitch vSwitchLAN bridge
     ${out}=  Run Keyword If  '%{HOST_TYPE}' == 'VC'  Add VC Distributed Portgroup  test-ds  bridge
+    
+    ${out}=  Run Keyword If  '%{HOST_TYPE}' == 'ESXi'  Run  govc host.portgroup.add -vswitch vSwitchLAN 'VM Network With Spaces'
+    ${rc}  ${output}=  Run Keyword If  '%{HOST_TYPE}' == 'VC'  Run And Return Rc And Output  govc dvs.portgroup.add -vlan=196 -dvs test-ds 'VM Network With Spaces'
 
-    ${output}=  Run  bin/vic-machine-linux create --name=%{VCH-NAME} --target="%{TEST_USERNAME}:%{TEST_PASSWORD}@%{TEST_URL}" --thumbprint=%{TEST_THUMBPRINT} --image-store=%{TEST_DATASTORE} --bridge-network=bridge --container-network 'VM Network With Spaces':vmnet --insecure-registry wdc-harbor-ci.eng.vmware.com ${vicmachinetls}
+    ${output}=  Run  bin/vic-machine-linux create --name=%{VCH-NAME} --target="%{TEST_USERNAME}:%{TEST_PASSWORD}@%{TEST_URL}" --thumbprint=%{TEST_THUMBPRINT} --image-store=%{TEST_DATASTORE} --public-network=%{PUBLIC_NETWORK} --bridge-network=%{BRIDGE_NETWORK} --container-network 'VM Network With Spaces':vmnet --insecure-registry wdc-harbor-ci.eng.vmware.com ${vicmachinetls}
     Should Contain  ${output}  Installer completed successfully
     Get Docker Params  ${output}  ${true}
     Log To Console  Installer completed successfully: %{VCH-NAME}
