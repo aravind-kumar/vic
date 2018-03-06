@@ -441,8 +441,6 @@ Container network - space in network name valid
     Run Keyword If  '%{HOST_TYPE}' == 'VC'  Remove VC Distributed Portgroup  'VM Network With Spaces'
     Run Keyword If  '%{HOST_TYPE}' == 'VC'  Remove VC Distributed Portgroup  bridge
 
-    # Delete the portgroup added by env vars keyword
-    Cleanup VCH Bridge Network  %{VCH-NAME}
     Cleanup VIC Appliance On Test Server
 
 Container Firewalls
