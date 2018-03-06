@@ -205,7 +205,7 @@ Container on Open Network And Port Forwarding Persist After Reboot
     Log To Console  Cleanup Port Groups For Container network
     ${out}=  Run Keyword If  '%{HOST_TYPE}' == 'ESXi'  Run  govc host.portgroup.remove open-net
     ${out}=  Run Keyword If  '%{HOST_TYPE}' == 'VC'  Remove VC Distributed Portgroup  open-net
-    Log ${out}
+    Log  ${out}
 
 Create VCH attach disk and reboot
     ${rc}=  Run And Return Rc  govc vm.disk.create -vm=%{VCH-NAME} -name=%{VCH-NAME}/deleteme -size "16M"
